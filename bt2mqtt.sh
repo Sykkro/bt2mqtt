@@ -147,7 +147,6 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # ensure required binaries are installed
-ls &> /dev/null || { echo "ls not found" ; exit 1; }
 hcitool &> /dev/null || { echo "hcitool not found" ; exit 1; }
 hciconfig &> /dev/null || { echo "hciconfig not found" ; exit 1; }
 
