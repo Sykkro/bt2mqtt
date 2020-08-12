@@ -40,3 +40,5 @@ docker buildx build \
 ```bash
 docker run --rm -it --net=host -v <path to local conf directory>:/conf --name bt2mqtt bt2mqtt:latest
 ```
+
+---
