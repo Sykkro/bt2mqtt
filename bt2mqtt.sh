@@ -147,8 +147,13 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # ensure required binaries are installed
-hcitool &> /dev/null || { echo "hcitool not found" ; exit 1; }
-hciconfig &> /dev/null || { echo "hciconfig not found" ; exit 1; }
+REQUIRED_CMDS="hcitool hciconfig"
+ 
+for i in $REQUIRED_CMDS
+do
+        # command -v will return >0 when the $i is not found
+	command -v $i >/dev/null && continue || { echo "$i command not found."; exit 1; }
+done
 
 # ensure configured device exists
 (hcitool dev | grep "$BT2MQTT_HCI_INTERFACE") &> /dev/null || { echo "Interface '$BT2MQTT_HCI_INTERFACE' not found" ; exit 1; }
