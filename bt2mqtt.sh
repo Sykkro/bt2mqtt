@@ -54,6 +54,26 @@ LOOP=true
 function log() {
     echo -e "\033[1m[$(date +"%F %T")]\033[0m\t $1"
 }
+
+function dumpConfig() {
+    log " ****************** STARTED ******************"
+    log " Configurations:"
+    log "- BT2MQTT_FILE_NAME = $BT2MQTT_FILE_NAME"
+    log "- BT2MQTT_POLL_INTERVAL = $BT2MQTT_POLL_INTERVAL"
+    log "- BT2MQTT_CHECK_PRESENCE_CYCLE = $BT2MQTT_CHECK_PRESENCE_CYCLE"
+    log "- BT2MQTT_DROP_RATE = $BT2MQTT_DROP_RATE"
+    log "- BT2MQTT_HCI_TIMEOUT_SECONDS = $BT2MQTT_HCI_TIMEOUT_SECONDS"
+    log "- BT2MQTT_HCI_INTERFACE = $BT2MQTT_HCI_INTERFACE"
+    log "- BT2MQTT_L2PING_TIMEOUT = $BT2MQTT_L2PING_TIMEOUT"
+    log "- BT2MQTT_EXEC_TIMEOUT = $BT2MQTT_EXEC_TIMEOUT"
+    log "- BT2MQTT_MQTT_HOST = $BT2MQTT_MQTT_HOST"
+    log "- BT2MQTT_MQTT_PORT = $BT2MQTT_MQTT_PORT"
+    log "- BT2MQTT_MQTT_CLIENT_ID = $BT2MQTT_MQTT_CLIENT_ID"
+    log "- BT2MQTT_MQTT_TOPIC = $BT2MQTT_MQTT_TOPIC"
+    log "- BT2MQTT_MQTT_QOS = $BT2MQTT_MQTT_QOS"
+    log " *********************************************"
+}
+
 #### BLUETOOTH MANAGEMENT ####
 
 function getDefaultTimeout() {
@@ -78,7 +98,7 @@ function publishEvent() {
 
 #### DEVICE MANAGEMENT ####
 function checkDevice() {
-	timeout -t $BT2MQTT_EXEC_TIMEOUT l2ping -s 0 -d 0 -c 1 -t $BT2MQTT_L2PING_TIMEOUT $1
+	timeout $BT2MQTT_EXEC_TIMEOUT l2ping -s 0 -d 0 -c 1 -t $BT2MQTT_L2PING_TIMEOUT $1
 }
 
 function updatePresence() {
@@ -147,7 +167,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # ensure required binaries are installed
-REQUIRED_CMDS="hcitool hciconfig"
+REQUIRED_CMDS="hcitool hciconfig mosquitto_pub l2ping timeout"
  
 for i in $REQUIRED_CMDS
 do
@@ -184,6 +204,7 @@ function onQuit() {
 }
 
 # 3 - start while true loop, set cycle to 0 and repeat after POLL seconds
+dumpConfig
 cycle=0
 while $LOOP
 do
